@@ -12,10 +12,10 @@ def compute_partial_sums(data):
 
 def emp_mean_partial_sums(data, start_index, length):
     
-    # Вычисление частичных сумм
+    # вычисление частичных сумм
     partial_sums = compute_partial_sums(data)
     
-    # Вычисление суммы и эмпирического среднего
+    # вычисление суммы и эмпирического среднего
     total_sum = partial_sums[start_index + length] - partial_sums[start_index]
     mean = total_sum / length
     
