@@ -4,3 +4,42 @@
 # На выходе подпрограммы: кросскорреляционная функция 
 # Используя созданную подпрограмму рассчитать и построить график автокорреляционной
 # временного ряда “Sin.txt” для целых тау от  0 до 1000 
+import numpy as np
+import matplotlib.pyplot as plt
+
+def cross_correlation(X, Y, tau, N):
+  """
+  Рассчитывает кросскорреляционную функцию для двух сигналов.
+
+  Args:
+      X: Первый сигнал (массив NumPy).
+      Y: Второй сигнал (массив NumPy).
+      tau: Сдвиг (целое число).
+      N: Длина анализируемых участков реализаций.
+
+  Returns:
+      Кросскорреляционная функция (float).
+  """
+  if len(X) < N + tau or len(Y) < N + tau:
+    raise ValueError("Длина сигналов должна быть больше N + tau.")
+
+  # Вычисление кросскорреляционной функции
+  rxy = np.sum((X[:N] * Y[tau:N+tau])) / N
+
+  return rxy
+
+# Загрузка данных из файла
+data = np.loadtxt("Sin.txt")
+
+# Вычисление автокорреляционной функции для различных значений tau
+taus = np.arange(0, 1001)
+autocorrelation = [cross_correlation(data, data, tau, len(data)) for tau in taus]
+
+# Построение графика автокорреляционной функции
+plt.figure(figsize=(10, 6))
+plt.plot(taus, autocorrelation)
+plt.title("Автокорреляционная функция сигнала")
+plt.xlabel("Сдвиг (tau)")
+plt.ylabel("Автокорреляция")
+plt.grid(True)
+plt.show()
