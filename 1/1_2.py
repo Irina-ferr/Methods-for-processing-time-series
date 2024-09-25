@@ -3,29 +3,19 @@
 # Вход и выход подпрограммы: аналогично п. 1.1. 
 import numpy as np
 
-def compute_partial_sums(data):
-  
-    partial_sums = [0] * (len(data) + 1)
-    for i in range(1, len(data) + 1):
-        partial_sums[i] = partial_sums[i - 1] + data[i - 1]
-    return partial_sums
-
 def emp_mean_partial_sums(data, start_index, length):
-    
-    # вычисление частичных сумм
-    partial_sums = compute_partial_sums(data)
-    
-    # вычисление суммы и эмпирического среднего
-    total_sum = partial_sums[start_index + length] - partial_sums[start_index]
-    mean = total_sum / length
-    
-    return mean
-
+    m= int(np.log2(lenght))
+    for j in range (1,m+1):
+        for i in range (0,int((lenght/pow(2,j)))):
+            data[i]= (data[2*i]+data[(2*i)+1]) / 2 
+    return data[0]
+   
 data = np.loadtxt  ('mean2.txt')
 print (data)
 st_index = int (input ("индекс первого элемента массива "))
 lenght = int (input ("длина анализируемого участка "))
-mean= emp_mean_partial_sums(data, st_index, lenght)
+m = np.log2(lenght)
+mean = emp_mean_partial_sums(data, st_index, lenght)
 print (f"Эмпирическое среднее {mean:.2f}")
 
 

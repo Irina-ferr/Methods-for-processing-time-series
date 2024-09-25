@@ -15,7 +15,7 @@ def calculate_variance(data, start_index, length):
     return variance
 
 
-data = np.loadtxt  ('mean1.txt')
+data = np.loadtxt ('mean1.txt')
 print (data)
 st_index = int (input ("индекс первого элемента массива "))
 lenght = int (input ("длина анализируемого участка "))
