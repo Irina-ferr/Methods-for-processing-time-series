@@ -8,63 +8,52 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def cross_correlation(X, Y, tau, N):
-    """ вычисляет кросскорреляционную функцию между двумя сигналами X и Y.
-    
-    НА ВХОД :
-    X: массив сигналов X
-    Y: массив сигналов Y
-    tau: величина сдвига (количество временных шагов)
-    N: длина анализируемых участков реализаций
-    
-    НА ВЫХОД:
-    значение кросскорреляционной функции для заданного сдвига
-    """
-    # если tau отрицательный, сдвиг влево
+    # проверяем, является ли сдвиг отрицательным
     if tau < 0:
-        #корреляция между последними N +tau элементами X и первыми N +    tau элементами Y
-        return np.corrcoef(X[-tau:N], Y[0:N + tau])[0, 1]
+        # для отрицательного сдвига выбираем сегменты из X и Y
+        X_segment = X[-tau:N]
+        Y_segment = Y[0:N + tau]
     else:
-        # если tau положительный, корреляция между первыми N -tau элементами X и последующими N -tau элементами Y
-        return np.corrcoef(X[0:N - tau], Y[tau:N])[0, 1]
+        # для положительного сдвига выбираем сегменты из X и Y
+        X_segment = X[0:N - tau]
+        Y_segment = Y[tau:N]
 
-# Чтение данных из текстового файла
-def load_signal(filename):
+    # вычисляем средние значения для сегментов
+    mean_X = np.mean(X_segment)
+    mean_Y = np.mean(Y_segment)
+
+    # вычисляем стандартные отклонения для сегментов
+    std_X = np.std(X_segment)
+    std_Y = np.std(Y_segment)
+
+    # вычисляем ковариацию между сегментами
+    covariance = np.sum((X_segment - mean_X) * (Y_segment - mean_Y))
+    # вычисляем корреляцию
+    correlation = covariance / ((len(X_segment) - 1) * std_X * std_Y)
+
+    return correlation
+
+def load_data(filename):
+    # загружаем данные из файла
     return np.loadtxt(filename)
 
-# Функция для вычисления автокорреляции сигнала
-def auto_correlation(signal, max_tau):
-    """ вычисляет автокорреляционную функцию для заданного сигнала.
-    
-    НА ВХОД:
-    signal: массив значений сигнала
-    max_tau: максимальное значение сдвига для расчета автокорреляции
-    
-    НА ВЫХОД:
-    список значений автокорреляции для каждого значения tau от 0 до max_tau
-    """
-    N = len(signal)  # длина сигнала
-    acf = []  # список для хранения значений автокорреляции
-    
-    # проходим по всем значениям tau от 0 до max_tau
-    for tau in range(max_tau + 1):
-        acf_value = cross_correlation(signal, signal, tau, N)  # вычисляем автокорреляцию для текущего tau
-        acf.append(acf_value)  # добавляем значение в список автокорреляции
-    return acf
+# загрузка данных из файла "Sin.txt"
+signal = load_data("Sin.txt")
 
-# загрузка сигнала
-signal = load_signal("Sin.txt")
+# определяем параметры
+N = len(signal)  # длина сигнала
+taus = range(0, 1001)  # диапазон значений сдвига от 0 до 1000
+autocorr = []  # список для хранения значений автокорреляции
 
-# устанавливаем макс значение сдвига для автокорреляции
-max_tau = 1000
-
-# расчет автокорреляции для сигнала
-acf_values = auto_correlation(signal, max_tau)
+# вычисление автокорреляционной функции для каждого значения сдвига
+for tau in taus:
+    autocorr.append(cross_correlation(signal, signal, tau, N))
 
 # построение графика автокорреляционной функции
-plt.figure(figsize=(10, 5))  # размер графика
-plt.plot(range(max_tau + 1), acf_values)  # график значений автокорреляции
-plt.title('АКФ')  # заголовок
-plt.xlabel('Сдвиг (tau)')  # подпись X
-plt.ylabel('Автокорреляция')  # подпись Y
-plt.grid()  # включаем сетку
-plt.show()  # отображаем
+plt.figure(figsize=(10, 6))
+plt.plot(taus, autocorr)
+plt.title('Автокорреляционная функция')  # заголовок графика
+plt.xlabel('Сдвиг (tau)')  # подпись оси X
+plt.ylabel('Автокорреляция')  # подпись оси Y
+plt.grid()  # включаем сетку на графике
+plt.show()  # отображаем график
