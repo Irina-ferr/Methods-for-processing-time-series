@@ -10,7 +10,7 @@
 # что скорость звука в стали используемой марки 5 км/c.  
 import numpy as np
 import matplotlib.pyplot as plt
-
+import math as m
 def cross_correlation(X, Y, tau):
     """вычисление кросс-корреляции между двумя сигналами."""
     N = len(X)
@@ -42,11 +42,11 @@ def find_time_delay(transmitter_signal, receiver_signal, max_tau):
     return time_delay_index
 
 # загрузка данных
-transmitter_signal = np.loadtxt("UStransmitter.txt")
-receiver_signal = np.loadtxt("USreceiver.txt")
+transmitter_signal = np.loadtxt("USreceiver.txt")
+receiver_signal = np.loadtxt("UStransmitter.txt")
 
 # параметры
-sampling_frequency = 100e6  # Частота дискретизации 100 МГц
+sampling_frequency = 100e6  # частота дискретизации 100 МГц
 speed_of_sound = 5000  # скорость звука в км/с
 max_tau = 2000  # максимальное значение для задержки
 
