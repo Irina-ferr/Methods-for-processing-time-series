@@ -42,6 +42,13 @@ def DFT(signal, N):
 # загрузка сигнала из файла
 signal = np.loadtxt('Sin.txt')
 
+plt.plot(signal)
+plt.title('временной ряд из обратного дпф')
+plt.xlabel('время')
+plt.ylabel('амплитуда')
+plt.grid()
+plt.show()
+
 # вычисление коэффициентов дпф
 a_h, b_h = DFT(signal, len(signal))
 
