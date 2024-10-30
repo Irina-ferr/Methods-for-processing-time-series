@@ -22,7 +22,7 @@ for i, N in enumerate(N_values):
     
     # построение периодограммы
     plt.subplot(3, 1, i + 1)
-    plt.psd(signal, x=256, y=1, color='blue', label=f'N={N}')
+    plt.psd(signal, NFFT=256, Fs=1, color='blue', label=f'N={N}')
     plt.title(f'Периодограмма гармонического сигнала (N={N})')
     plt.xlabel('Частота')
     plt.ylabel('Плотность спектра мощности')

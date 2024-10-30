@@ -56,7 +56,7 @@ plt.title("Окно Бартлетта")
 
 
 plt.subplot(4, 1, 3)
-plt.plot(t,Window_func(signal,N,2),color = 'yellow', linewidth = 1)
+plt.plot(t,Window_func(signal,N,2),color = 'orange', linewidth = 1)
 plt.title("Окно Хэмминга")
 
 

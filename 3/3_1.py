@@ -4,35 +4,27 @@
 # На выходе подпрограммы: массивы коэффициентов
 # ah и bh: Ah и Bh соответственно
 import numpy as np
-import math
 import matplotlib.pyplot as plt
+import math
+# функция для вычисления дискретного преобразования Фурье
+def DFT(signal,sampling_rate):
+    N=len(signal)
+    if (N%2==1):
+        M=round(N/2)+1
+    else:
+        M=N/2
+    M=int(M)    
+    ah = np.zeros(M)  # массив для коэффициентов a_h
+    bh = np.zeros(M)  # массив для коэффициентов b_h
 
-# функция для расчета коэффициентов дпф
-def DFT(signal, N):
-    """
-    вычисляет коэффициенты a_h и b_h для дискретного преобразования фурье (дпф) сигнала.
-    
-    на вход: 
-        signal: входной массив сигналов (временной ряд).
-        N: длина анализируемого участка ряда
-
-    на выход:
-        ah: массив коэффициентов a_h (косинусные компоненты).
-        bh: массив коэффициентов b_h (синусные компоненты).
-    """
-    
-    ah = np.zeros(N // 2 + 1)  # массив для коэффициентов a_h
-    bh = np.zeros(N // 2 + 1)  # массив для коэффициентов b_h
-
-    for h in range(0, N // 2 + 1):
+    for h in range(0, M):
         sum_sig1 = 0.0
         sum_sig2 = 0.0
+        fh = h/N*sampling_rate  # частота
         for i in range(N):
-            dt = (i + 1) * 0.1  # предполагаем, что шаг времени равен 0.1
-            fh = h / (N * dt)   # частота
-
-            sum_sig1 += signal[i] * math.cos(2 * math.pi * fh * (i * 0.1))
-            sum_sig2 += signal[i] * math.sin(2 * math.pi * fh * (i * 0.1))
+            
+            sum_sig1 += signal[i] * np.cos(2 * np.pi * fh * (i / sampling_rate))
+            sum_sig2 += signal[i] * np.sin(2 * np.pi * fh * (i / sampling_rate))
 
         ah[h] = (2 / N) * sum_sig1
         bh[h] = (-2 / N) * sum_sig2

@@ -7,30 +7,35 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-# загрузка данных
+# Загрузка данных
 data = np.loadtxt('X2000Hz.txt')
 
-# частота дискретизации
+# Предполагаем, что первый столбец - это время, второй - значения сигнала
+time = data[:, 0]  # Временные метки
+signal = data[:, 1]  # Значения сигнала
+
+# Частота дискретизации
 fs = 2000  # Гц
 
-# построение периодограммы исходного сигнала
-plt.figure(figsize=(12, 6))
-plt.psd(data, NFFT=1024, Fs=fs, color='blue')
+# Построение периодограммы исходного сигнала
+plt.subplot(2,1,1)
+plt.psd(signal, NFFT=1024, Fs=fs, color='blue')
 plt.title('Периодограмма исходного сигнала (2000 Гц)')
 plt.xlabel('Частота (Гц)')
-plt.ylabel('Плотность спектра мощности')
+plt.ylabel('Спектральная мощность')
 plt.grid()
-plt.show()
 
-# прореживание сигнала
-downsampled_data = data[::10]
-fs_new = fs / 10  # Новая частота дискретизации
+# Прореживание сигнала
+downsampled_signal = signal[::10]  # Выбираем каждый 10-й отсчет
+fs_new = fs / 10  # Новая частота дискретизации (200 Гц)
 
-# построение периодограммы прореженного сигнала
-plt.figure(figsize=(12, 6))
-plt.psd(downsampled_data, NFFT=1024, Fs=fs_new, color='red')
+# Построение периодограммы прореженного сигнала
+plt.subplot(2,1,2)
+plt.psd(downsampled_signal, NFFT=1024, Fs=fs_new, color='red')
 plt.title('Периодограмма прореженного сигнала (200 Гц)')
 plt.xlabel('Частота (Гц)')
-plt.ylabel('Плотность спектра мощности')
+plt.ylabel('Спектральная мощность')
 plt.grid()
+plt.legend()
+plt.tight_layout()  # автоматическая настройка макета графиков
 plt.show()
