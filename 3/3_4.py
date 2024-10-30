@@ -35,16 +35,16 @@ def DFT(signal,sampling_rate):
 # параметры
 fs = 100  # частота дискретизации (Гц)
 duration = 2  # длительность сигнала (сек)
-t = np.linspace(0, duration, int(fs * duration), endpoint=False)  # временные метки
+t = np.linspace(0, duration, int(fs * duration))  # временные метки
 
 # генерация синусоидальных сигналов
 amplitude1 = 1.2
 frequency1 = 10  # частота первого сигнала (Гц)
-signal1 = amplitude1 * np.sin(2 * np.pi * frequency1 * t)
+signal1 = amplitude1 * np.sin(2 * np.pi * frequency1 * t[:-1])
 
 amplitude2 = 2
 frequency2 = 20  # частота второго сигнала (Гц)
-signal2 = amplitude2 * np.sin(2 * np.pi * frequency2 * t)
+signal2 = amplitude2 * np.sin(2 * np.pi * frequency2 * t[:-1])
 
 # сумма сигналов
 combined_signal = signal1 + signal2
@@ -61,7 +61,7 @@ plt.figure(figsize=(12, 6))
 
 # график временного ряда
 plt.subplot(2, 1, 1)
-plt.plot(t, combined_signal)
+plt.plot(t[:-1], combined_signal)
 plt.title('Сумма синусоидальных сигналов')
 plt.xlabel('Время (с)')
 plt.ylabel('Амплитуда')
@@ -70,7 +70,7 @@ plt.grid()
 # график амплитудного спектра
 frequencies = np.linspace(0, fs / 2, len(amplitude_spectrum))  # частоты для оси x
 plt.subplot(2, 1, 2)
-plt.stem(frequencies, amplitude_spectrum,markerfmt='' )
+plt.stem(frequencies, amplitude_spectrum, markerfmt='' )
 plt.title('Амплитудный спектр')
 plt.xlabel('Частота (Гц)')
 plt.ylabel('Амплитуда')

@@ -7,35 +7,63 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Загрузка данных
+def DFT(signal, sampling_rate):
+    N = len(signal)
+    if N % 2 == 1:
+        M = round(N / 2) + 1
+    else:
+        M = N // 2
+    M = int(M)
+    
+    ah = np.zeros(M)  # массив для коэффициентов a_h
+    bh = np.zeros(M)  # массив для коэффициентов b_h
+
+    for h in range(M):
+        sum_sig1 = 0.0
+        sum_sig2 = 0.0
+        fh = h / N * sampling_rate  # частота
+        for i in range(N):
+            sum_sig1 += signal[i] * np.cos(2 * np.pi * fh * (i / sampling_rate))
+            sum_sig2 += signal[i] * np.sin(2 * np.pi * fh * (i / sampling_rate))
+
+        ah[h] = (2 / N) * sum_sig1
+        bh[h] = (-2 / N) * sum_sig2
+
+    return ah, bh
+
 data = np.loadtxt('X2000Hz.txt')
 
-# Предполагаем, что первый столбец - это время, второй - значения сигнала
-time = data[:, 0]  # Временные метки
-signal = data[:, 1]  # Значения сигнала
+time = data[:, 0]  
+signal = data[:, 1]  
 
-# Частота дискретизации
+# частота дискретизации
 fs = 2000  # Гц
 
-# Построение периодограммы исходного сигнала
-plt.subplot(2,1,1)
-plt.psd(signal, NFFT=1024, Fs=fs, color='blue')
-plt.title('Периодограмма исходного сигнала (2000 Гц)')
-plt.xlabel('Частота (Гц)')
-plt.ylabel('Спектральная мощность')
-plt.grid()
+# построение периодограммы исходного сигнала с использованием DFT
+ah, bh = DFT(signal, fs)
+frequencies = np.arange(len(ah)) * fs / len(signal)
+fig,ax=plt.subplots(nrows=2,sharex=True)
+ax[0].plot(frequencies, np.sqrt(ah**2 + bh**2), color='blue')
+ax[0].set_title('Периодограмма исходного сигнала (2000 Гц)')
+ax[0].set_xlabel('Частота (Гц)')
+ax[0].set_ylabel('Спектральная мощность')
+ax[0].set_xlim(0, fs / 2)
 
-# Прореживание сигнала
-downsampled_signal = signal[::10]  # Выбираем каждый 10-й отсчет
-fs_new = fs / 10  # Новая частота дискретизации (200 Гц)
+t_frequency = fs/2
+frequencies_mask = frequencies < t_frequency
+ah[~frequencies_mask] = 0
+bh[~frequencies_mask] = 0
 
-# Построение периодограммы прореженного сигнала
-plt.subplot(2,1,2)
-plt.psd(downsampled_signal, NFFT=1024, Fs=fs_new, color='red')
-plt.title('Периодограмма прореженного сигнала (200 Гц)')
-plt.xlabel('Частота (Гц)')
-plt.ylabel('Спектральная мощность')
-plt.grid()
-plt.legend()
-plt.tight_layout()  # автоматическая настройка макета графиков
+downsampled_signal = signal[::10]
+fs_new = fs / 10 
+
+ah_downsampled, bh_downsampled = DFT(downsampled_signal, fs_new)
+frequencies_new = np.arange(len(ah_downsampled)) * fs_new / len(downsampled_signal)
+
+ax[1].plot(frequencies_new,np.sqrt(ah_downsampled**2 + bh_downsampled**2), color='red')
+ax[1].set_title('Периодограмма сигнала (200 Гц)')
+ax[1].set_xlabel('Частота (Гц)')
+ax[1].set_ylabel('Спектральная мощность')
+ax[1].set_xlim(0, fs_new / 2)
+
 plt.show()

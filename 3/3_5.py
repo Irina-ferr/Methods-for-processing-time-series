@@ -27,6 +27,29 @@ def re_DFT(a_h, b_h, M, N):
     
     return signal  # возвращаем восстановленный сигнал
 
+def DFT(signal,sampling_rate):
+    N=len(signal)
+    if (N%2==1):
+        M=round(N/2)+1
+    else:
+        M=N/2
+    M=int(M)    
+    ah = np.zeros(M)  # массив для коэффициентов a_h
+    bh = np.zeros(M)  # массив для коэффициентов b_h
+
+    for h in range(0, M):
+        sum_sig1 = 0.0
+        sum_sig2 = 0.0
+        fh = h/N*sampling_rate  # частота
+        for i in range(N):
+            
+            sum_sig1 += signal[i] * np.cos(2 * np.pi * fh * (i / sampling_rate))
+            sum_sig2 += signal[i] * np.sin(2 * np.pi * fh * (i / sampling_rate))
+
+        ah[h] = (2 / N) * sum_sig1
+        bh[h] = (-2 / N) * sum_sig2
+
+    return ah, bh
 # параметры
 fs = 100  # частота дискретизации (Гц)
 duration = 2  # длительность сигнала (сек)
@@ -43,22 +66,16 @@ signal2 = amplitude2 * np.sin(2 * np.pi * frequency2 * t)  # второй сиг
 
 # сумма сигналов
 combined_signal = signal1 + signal2  # комбинированный сигнал
-
-# расчет коэффициентов дпф
-N = len(combined_signal)  # общее количество точек
-M = N // 2  # количество гармоник
-a_h = np.zeros(M)  # массив для косинусных коэффициентов
-b_h = np.zeros(M)  # массив для синусных коэффициентов
-
-for k in range(M):  # перебираем гармоники
-    # вычисляем косинусные коэффициенты
-    a_h[k] = (2/N) * np.sum(combined_signal * np.cos(2 * np.pi * k * np.arange(N) / N))
-    # вычисляем синусные коэффициенты
-    b_h[k] = (2/N) * np.sum(combined_signal * np.sin(2 * np.pi * k * np.arange(N) / N))
-
+N=len(combined_signal)
+a_h,b_h=DFT(combined_signal,N)
+if (N%2==1):
+    M=round(N/2)+1
+else:
+    M=N/2
+M=int(M) 
 # восстановление сигнала с помощью обратного дпф
 reconstructed_signal = re_DFT(a_h, b_h, M, N)
-
+reconstructed_signal=reconstructed_signal*(-1)
 # разница между исходным и восстановленным сигналом
 difference_signal = combined_signal - reconstructed_signal  # разница между сигналами
 
