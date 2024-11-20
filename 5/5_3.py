@@ -32,27 +32,27 @@ def daniell_spectrum(signal, window_width, sampling_rate):
     N = len(signal)
     padded_signal = np.pad(signal, (0, max(0, window_width - N % window_width)), 'constant')
     num_windows = len(padded_signal) // window_width
-    spectrum = np.zeros(window_width // 2)  # Инициализируем массив для спектра
+    spectrum = np.zeros(window_width // 2)  # инициализируем массив для спектра
 
     for i in range(num_windows):
         windowed_signal = padded_signal[i * window_width: (i + 1) * window_width]
         ah, bh = DFT(windowed_signal, sampling_rate)
-        power_spectrum = ah**2 + bh**2  # Оценка спектра мощности
+        power_spectrum = ah**2 + bh**2  # оценка спектра мощности
         spectrum += power_spectrum
 
-    # Усредняем спектр по всем окнам
+    # усредняем спектр по всем окнам
     spectrum /= num_windows
 
     return spectrum
 
-# Загрузка белого шума из файла
+# загрузка белого шума из файла
 signal = np.loadtxt('noise.txt')
 
-# Параметры
+# параметры
 sampling_rate = 1000  # Частота дискретизации
 window_widths = [64, 128, 256, 512]  # Ширины окон усреднения
 
-# Визуализация результатов
+# визуализация результатов
 plt.figure(figsize=(10, 8))
 
 for window_width in window_widths:
