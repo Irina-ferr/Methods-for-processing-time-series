@@ -64,3 +64,4 @@ def DFT(signal, sampling_rate):
         bh[h] = (-2 / N) * sum_sig2
     
     return ah, bh
+

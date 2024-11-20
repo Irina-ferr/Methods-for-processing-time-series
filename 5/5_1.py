@@ -35,7 +35,9 @@ def DFT(signal, sampling_rate):
 # Загрузка данных из файла
 file_path = 'lfp.txt'
 data = np.loadtxt('lfp.txt')
-
+q=len(data)
+q=q//4
+data = data [:q]
 # Параметры
 sampling_rate = 1000  # Частота дискретизации
 
@@ -43,11 +45,12 @@ sampling_rate = 1000  # Частота дискретизации
 ah, bh = DFT(data, sampling_rate)
 
 # Расчет спектральной плотности
-power_spectrum = ah**2 + bh**2
+power_spectrum = np.sqrt(ah**2 + bh**2)
 
 # Применяем логарифмическое преобразование к спектральной плотности
 # Добавляем небольшую величину для избегания логарифма от нуля
-power_spectrum_log = 10 * np.log10(power_spectrum + 1e-10)
+
+power_spectrum_log = 20 * np.log10(power_spectrum/np.max(power_spectrum) + 1e-10)
 
 # Частоты
 freqs = np.arange(len(power_spectrum)) * (sampling_rate / len(data))
