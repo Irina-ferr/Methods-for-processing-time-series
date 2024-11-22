@@ -7,6 +7,7 @@
 # При реализации метода можно использовать подпрограмму, осуществляющую ДПФ,
 # созданную при выполнении п. 3.1.
 import numpy as np
+import math
 import matplotlib.pyplot as plt
 
 def DFT(signal, sampling_rate):
@@ -34,39 +35,37 @@ def DFT(signal, sampling_rate):
     return ah, bh
 
 def daniell(signal, window_width, sampling_rate):
-    N = len(signal)
-    padded_signal = np.pad(signal, (0, max(0, window_width - N % window_width)), 'constant')
-    num_windows = len(padded_signal) // window_width
-    spectrum = np.zeros(window_width // 2)  # Инициализируем массив для спектра
-
-    for i in range(num_windows):
-        windowed_signal = padded_signal[i * window_width: (i + 1) * window_width]
-        ah, bh = DFT(windowed_signal, sampling_rate)
-        power_spectrum = ah**2 + bh**2  # Оценка спектра мощности
-        spectrum += power_spectrum
-
-    # Усредняем спектр по всем окнам
-    spectrum /= num_windows
-
+    ah, bh = DFT(signal, sampling_rate)
+    power_spectrum = ah**2 + bh**2
+    N=len(power_spectrum)
+    spectrum=[]
+    for i in range (N-1):
+        if((i<window_width) or(i>(N-window_width-1))):
+            spectrum.append(power_spectrum[i])
+            
+        else:
+            window=power_spectrum[i-(window_width//2):i+(window_width//2)+1]
+            daniell_sp=sum(window)/len(window)
+            spectrum.append(daniell_sp)
     return spectrum
 
-# Пример использования
+# Генерируем тестовый сигнал (синусоида)
 
-# Генерируем тестовый сигнал (синусоида с шумом)
-fs = 1000  # Частота дискретизации
-t = np.arange(0, 1, 1/fs)
-signal = 0.5 * np.sin(2 * np.pi * 50 * t) + 0.1 * np.random.randn(len(t))  # 50 Гц с шумом
+A = 5 # амплитуда
+F = 30 # частота
+dt = 0.01 # шаг между измерениями
+fs= 1/dt
+t = np.linspace(0,20,int(20/dt)) # временная ось
+signal = A*np.sin(2*math.pi*F*t) # создание сигнала длина 2000
 
 # Параметры
-window_width = 256  # Ширина окна усреднения
+window_width = 101  # Ширина окна усреднения
 
 # Рассчитываем спектр по методу Даньелла
 spectrum = daniell(signal, window_width, fs)
-
-# Визуализация спектра
-freqs = np.arange(window_width // 2) * (fs / window_width)
-
-plt.plot(freqs, spectrum)
+for i in range(len(spectrum)):
+    spectrum[i]=spectrum[i]*(fs/len(spectrum))
+plt.plot(spectrum)
 plt.title("Оценка спектра мощности методом Даньелла")
 plt.xlabel("Частота (Гц)")
 plt.ylabel("Спектр мощности")

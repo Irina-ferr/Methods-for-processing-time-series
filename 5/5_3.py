@@ -1,5 +1,5 @@
 # С помощью подпрограммы, созданной при выполнения п. 5.2 оценить спектр
-# реализации белого шума из файла “noise.txt” при различных
+# реализации белого шума из файла “Noise.txt” при различных
 # значениях ширины окна усреднения. 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -29,37 +29,38 @@ def DFT(signal, sampling_rate):
     return ah, bh
 
 def daniell_spectrum(signal, window_width, sampling_rate):
-    N = len(signal)
-    padded_signal = np.pad(signal, (0, max(0, window_width - N % window_width)), 'constant')
-    num_windows = len(padded_signal) // window_width
-    spectrum = np.zeros(window_width // 2)  # инициализируем массив для спектра
-
-    for i in range(num_windows):
-        windowed_signal = padded_signal[i * window_width: (i + 1) * window_width]
-        ah, bh = DFT(windowed_signal, sampling_rate)
-        power_spectrum = ah**2 + bh**2  # оценка спектра мощности
-        spectrum += power_spectrum
-
-    # усредняем спектр по всем окнам
-    spectrum /= num_windows
-
+    
+    ah, bh = DFT(signal, sampling_rate)
+    power_spectrum = ah**2 + bh**2
+    N=len(power_spectrum)
+    spectrum=[]
+    for i in range (N-1):
+        if((i<window_width) or(i>(N-window_width-1))):
+            spectrum.append(power_spectrum[i])
+            
+        else:
+            window=power_spectrum[i-(window_width//2):i+(window_width//2)+1]
+            daniell_sp=sum(window)/len(window)
+            spectrum.append(daniell_sp)
     return spectrum
 
 # загрузка белого шума из файла
 signal = np.loadtxt('noise.txt')
 
 # параметры
-sampling_rate = 1000  # Частота дискретизации
-window_widths = [64, 128, 256, 512]  # Ширины окон усреднения
+sampling_rate = 250  # Частота дискретизации
+window_widths = [63, 127, 255, 511]  # Ширины окон усреднения
 
 # визуализация результатов
 plt.figure(figsize=(10, 8))
 
 for window_width in window_widths:
     spectrum = daniell_spectrum(signal, window_width, sampling_rate)
+    for i in range(len(spectrum)):
+        spectrum[i]=spectrum[i]*(sampling_rate/len(spectrum))
     freqs = np.arange(len(spectrum)) * (sampling_rate / len(spectrum))
     
-    plt.plot(freqs, spectrum, label=f'Width = {window_width}')
+    plt.plot(spectrum, label=f'Width = {window_width}')
 
 plt.title("Оценка спектра мощности методом Даньелла")
 plt.xlabel("Частота (Гц)")

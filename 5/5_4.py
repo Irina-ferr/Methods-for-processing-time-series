@@ -41,23 +41,20 @@ def DFT(signal, sampling_rate):
     return ah, bh
 
 def daniell_spectrum(signal, window_width, sampling_rate):
-    N = len(signal)
-    padded_signal = np.pad(signal, (0, max(0, window_width - N % window_width)), 'constant')
-    num_windows = len(padded_signal) // window_width
-    spectrum = np.zeros(window_width // 2)  # инициализируем массив для спектра
-
-    for i in range(num_windows):
-        windowed_signal = padded_signal[i * window_width: (i + 1) * window_width]
-        ah, bh = DFT(windowed_signal, sampling_rate)
-        power_spectrum = ah**2 + bh**2  # оценка спектра мощности
-        spectrum += power_spectrum
-
-    # усредняем спектр по всем окнам
-    spectrum /= num_windows
-
+    ah, bh = DFT(signal, sampling_rate)
+    power_spectrum = ah**2 + bh**2
+    N=len(power_spectrum)
+    spectrum=[]
+    for i in range (N-1):
+        if((i<window_width) or(i>(N-window_width-1))):
+            spectrum.append(power_spectrum[i])
+            
+        else:
+            window=power_spectrum[i-(window_width//2):i+(window_width//2)+1]
+            daniell_sp=sum(window)/len(window)
+            spectrum.append(daniell_sp)
     return spectrum
 
-# оценка спектра мощности с помощью DFT вместо FFT
 frequencies_dft = np.arange(len(signal)) * (sampling_rate / len(signal))
 spectrum_dft = np.zeros(len(frequencies_dft) // 2)
 
