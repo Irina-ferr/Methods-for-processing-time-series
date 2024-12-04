@@ -47,6 +47,12 @@ y = np.zeros(y_length)
 for i in range(y_length):
     y[i] = convolution_at_time(x, x_length, h, h_length, i)
 
+# Убираем последние две точки свертки
+y = y[:-2]  # Удаляем последние две точки
+
+# Обновляем длину результата после удаления точек
+y_length -= 2
+
 # Построение графиков
 plt.figure(figsize=(12, 8))
 

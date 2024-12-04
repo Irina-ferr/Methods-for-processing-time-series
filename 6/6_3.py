@@ -57,17 +57,19 @@ ah_y, bh_y = DFT(y)
 
 # Расчет амплитуд
 X_f = np.sqrt(ah_x**2 + bh_x**2)
+X_f =X_f [:-2]
 H_f = np.sqrt(ah_h**2 + bh_h**2)
+H_f =H_f [:-2]
 Y_f = np.sqrt(ah_y**2 + bh_y**2)
-
+Y_f =Y_f [:-2]
 # Расчет произведения X(f) и Y(f)
 XY_f = X_f * Y_f[:len(X_f)]
 
 # Частота для графиков
-freqs_x = np.linspace(0, 0.5, len(X_f))  # Нормализованные частоты
+freqs_x = np.linspace(0, 0.5, len(X_f))  
 freqs_h = np.linspace(0, 0.5, len(H_f))
 freqs_y = np.linspace(0, 0.5, len(Y_f))
-freqs_xy = freqs_x  # Частоты совпадают по размерности
+freqs_xy = freqs_x  
 
 # Построение графиков
 plt.figure(figsize=(12, 8))
