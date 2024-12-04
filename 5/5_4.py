@@ -64,6 +64,8 @@ spectrum_dft[:len(ah)] = ah**2 + bh**2  # оценка спектра мощно
 # оценка спектра мощности методом Даньелла
 window_width = 100  # ширина окна для метода Даньелла
 spectrum_daniell = daniell_spectrum(signal, window_width, sampling_rate)
+for i in range(len(spectrum_daniell)):
+    spectrum_daniell[i]=spectrum_daniell[i]*(sampling_rate/len(spectrum_daniell))
 
 # визуализация результатов
 plt.figure(figsize=(12, 6))
