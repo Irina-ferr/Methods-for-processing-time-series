@@ -94,12 +94,13 @@ phase = 0
 signal = generate_harmonic_signal(period, length, amplitude, phase)
 
 # Параметры для методов
-window_size = 600  # ширина окна
+window_size_dan = 2  # ширина окна
+window_size=600
 overlap = window_size // 2  # сдвиг
-window_type = 2  #хэмминг
+window_type = 3  #прямоугольное
 
 # Оценка спектра мощности
-spectrum_daniell = daniell_spectrum(signal, window_size)
+spectrum_daniell = daniell_spectrum(signal, window_size_dan+1)
 spectrum_welch = Welch(signal, length, window_size, overlap, window_type)
 
 # Частоты для графиков
