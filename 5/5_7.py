@@ -25,8 +25,8 @@ def DFT(signal):
 
     return ah, bh
 
-def daniell_spectrum(signal, window_width, sampling_rate):
-    ah, bh = DFT(signal, sampling_rate)
+def daniell_spectrum(signal, window_width):
+    ah, bh = DFT(signal)
     power_spectrum = ah**2 + bh**2
     N=len(power_spectrum)
     spectrum=[]
@@ -94,19 +94,40 @@ phase = 0
 signal = generate_harmonic_signal(period, length, amplitude, phase)
 
 # Параметры для методов
-window_size = 300  # Ширина окна
-overlap = window_size // 2  # Перекрытие
+window_size = 600  # ширина окна
+overlap = window_size // 2  # сдвиг
+window_type = 2  #хэмминг
 
 # Оценка спектра мощности
 spectrum_daniell = daniell_spectrum(signal, window_size)
-spectrum_welch = Welch(signal, window_size, overlap)
+spectrum_welch = Welch(signal, length, window_size, overlap, window_type)
 
 # Частоты для графиков
 frequencies_daniell = np.linspace(0, len(signal) / (2 * period), len(spectrum_daniell))
 frequencies_welch = np.linspace(0, len(signal) / (2 * period), len(spectrum_welch))
 
-# Шаг 4: Сравнение результатов на графиках
-plt.figure(figsize=(12, 6))
+
+# # График метода Даньелла
+# plt.subplot(2, 1, 1)
+# plt.plot(frequencies_daniell, spectrum_daniell)
+# plt.title('Спектр мощности (Метод Даньелла)')
+# plt.xlabel('Частота (Гц)')
+# plt.ylabel('Спектр мощности')
+# plt.grid()
+
+# # График метода Уэлча
+# plt.subplot(2, 1, 2)
+# plt.plot(frequencies_welch, spectrum_welch)
+# plt.title('Спектр мощности (Метод Уэлча)')
+# plt.xlabel('Частота (Гц)')
+# plt.ylabel('Спектр мощности')
+# plt.grid()
+
+# plt.tight_layout()
+# plt.show()
+# Определение пределов оси Y
+y_min = min(np.min(spectrum_daniell), np.min(spectrum_welch))
+y_max = max(np.max(spectrum_daniell), np.max(spectrum_welch))
 
 # График метода Даньелла
 plt.subplot(2, 1, 1)
@@ -115,6 +136,7 @@ plt.title('Спектр мощности (Метод Даньелла)')
 plt.xlabel('Частота (Гц)')
 plt.ylabel('Спектр мощности')
 plt.grid()
+plt.ylim(y_min, y_max)  # Установка одинаковых пределов по оси Y
 
 # График метода Уэлча
 plt.subplot(2, 1, 2)
@@ -123,6 +145,7 @@ plt.title('Спектр мощности (Метод Уэлча)')
 plt.xlabel('Частота (Гц)')
 plt.ylabel('Спектр мощности')
 plt.grid()
+plt.ylim(y_min, y_max)  # Установка одинаковых пределов по оси Y
 
 plt.tight_layout()
 plt.show()
