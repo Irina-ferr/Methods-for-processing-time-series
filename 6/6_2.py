@@ -40,18 +40,18 @@ x_length = len(x)
 h_length = len(h)
 
 # Длина результата свертки
-y_length = x_length + h_length - 1
+y_length = x_length
 y = np.zeros(y_length)
 
 # Вычисление свертки
 for i in range(y_length):
     y[i] = convolution_at_time(x, x_length, h, h_length, i)
 
-# Убираем последние две точки свертки
-y = y[:-2]  # Удаляем последние две точки
+# # Убираем последние две точки свертки
+# y = y[:-2]  # Удаляем последние две точки
 
-# Обновляем длину результата после удаления точек
-y_length -= 2
+# # Обновляем длину результата после удаления точек
+# y_length -= 2
 
 # Построение графиков
 plt.figure(figsize=(12, 8))
