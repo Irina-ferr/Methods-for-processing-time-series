@@ -55,7 +55,7 @@ plt.title('Импульсная характеристика')
 plt.ylabel('Амплитуда')
 plt.grid()
 plt.tight_layout()
-
+print(impulse_response)
 # АЧХ рассчет
 amplitude_response = calc_amplitude_response(impulse_response)
 frequencies = np.linspace(0, 0.5, len(amplitude_response))

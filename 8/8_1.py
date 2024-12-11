@@ -57,7 +57,7 @@ plt.tight_layout()
 # АЧХ рассчет
 amplitude_response = calc_amplitude_response(impulse_response)
 frequencies = np.linspace(0, 0.5, len(amplitude_response))
-
+print(impulse_response)
 # АЧХ график
 plt.subplot(1, 2, 1)
 plt.plot(frequencies, amplitude_response)

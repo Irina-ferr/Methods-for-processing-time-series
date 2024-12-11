@@ -68,3 +68,4 @@ plt.grid()
 plt.tight_layout()
 
 plt.show()
+print(impulse_response)
